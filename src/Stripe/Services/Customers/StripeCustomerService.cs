@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Stripe.Infrastructure;
+using System;
+using System.Collections.Generic;
 
 namespace Stripe
 {
@@ -56,6 +58,19 @@ namespace Stripe
 
 			return Mapper<StripeCustomer>.MapCollectionFromJson(response);
 		}
+
+        public virtual IEnumerable<StripeCustomer> List(DateTime minCreatedUtc, DateTime maxCreatedUtc, int count = 10, int offset = 0)
+        {
+            var url = Urls.Customers;
+            url = ParameterBuilder.ApplyParameterToUrl(url, "count", count.ToString());
+            url = ParameterBuilder.ApplyParameterToUrl(url, "offset", offset.ToString());
+            url = ParameterBuilder.ApplyParameterToUrl(url, "created[gte]", StripeDateTimeConverter.ConvertDateTimeToEpoch(minCreatedUtc).ToString());
+            url = ParameterBuilder.ApplyParameterToUrl(url, "created[lte]", StripeDateTimeConverter.ConvertDateTimeToEpoch(maxCreatedUtc).ToString());
+
+            var response = Requestor.GetString(url, ApiKey);
+
+            return Mapper<StripeCustomer>.MapCollectionFromJson(response);
+        }
 
 		public virtual StripeSubscription UpdateSubscription(string customerId, StripeCustomerUpdateSubscriptionOptions updateOptions)
 		{

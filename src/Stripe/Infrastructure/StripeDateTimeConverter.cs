@@ -26,7 +26,7 @@ namespace Stripe.Infrastructure
 			return new DateTime(1970, 1, 1).AddSeconds(seconds);
 		}
 
-		private long ConvertDateTimeToEpoch(DateTime datetime)
+		public static long ConvertDateTimeToEpoch(DateTime datetime)
 		{
 			var epochStart = new DateTime(1970, 1, 1);
 			if (datetime < epochStart) return 0;
